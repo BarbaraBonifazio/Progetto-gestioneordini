@@ -1,13 +1,11 @@
 package it.solvingteam.gestioneordini.dao.categoria;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
-import it.solvingteam.gestioneordini.model.articolo.Articolo;
 import it.solvingteam.gestioneordini.model.categoria.Categoria;
 import it.solvingteam.gestioneordini.model.ordine.Ordine;
 
@@ -76,21 +74,7 @@ public class CategoriaDAOImpl implements CategoriaDAO{
 		if (categoriaInstance == null) {
 			throw new Exception("Problema valore in input");
 		}
-		
-		Set<Articolo> articoli = new HashSet<>();
-		//ho necessità di verificare che non ci siano degli articoli associati alla categoria che voglio eliminare 
-		//effettuo una query su Articolo per ottenere tutti gli articoli eventualmente associati a quella categoria 
-		TypedQuery<Articolo> query = entityManager.createQuery("SELECT a FROM Articolo a join a.categorie cat where cat = :categoria",Articolo.class);
-		query.setParameter("categoria", categoriaInstance);
-		articoli = query.getResultList().stream().collect(Collectors.toSet());
-		
-		if(articoli.size()==0) { //se la lista degli articoli ricavati da DB è vuota allora entro nell'if
-			System.out.println("\n\nNon ci sono Articoli assegnati a questa Categoria! Puoi procedere con l'eliminazione.\n\n");
 			entityManager.remove(entityManager.merge(categoriaInstance)); //eseguo l'eliminazione dopo il merge di eventuali modifiche fatte sulla "nuvoletta"
-			System.out.println("\n\nLa categoria è stata correttamente eliminata!\n\n");	
-		} else {	//altrimenti rimando indietro la richiesta e stampo in console il motivo
-			System.out.println("\n\n !!ATTENZIONE!! La categoria che cerchi di eliminare è stata assegnata ad almeno un articolo pertanto non puoi eliminarla!\n\n");
-		}			
 	}
 	
 	//Metodo che mi permette di richiamare una categoria da DB per la sua descrizione (al fine di non dover controllare l'id a DB)

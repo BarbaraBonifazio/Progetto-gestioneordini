@@ -1,5 +1,6 @@
-package it.solvingteam.gestioneordini.dao;
+package it.solvingteam.gestioneordini.service;
 
+import it.solvingteam.gestioneordini.dao.MyDAOFactory;
 import it.solvingteam.gestioneordini.service.articolo.ArticoloService;
 import it.solvingteam.gestioneordini.service.articolo.ArticoloServiceImpl;
 import it.solvingteam.gestioneordini.service.categoria.CategoriaService;

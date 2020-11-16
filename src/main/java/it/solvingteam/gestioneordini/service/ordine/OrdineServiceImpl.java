@@ -7,6 +7,7 @@ import javax.persistence.EntityManager;
 import it.solvingteam.gestioneordini.dao.EntityManagerUtil;
 import it.solvingteam.gestioneordini.dao.ordine.OrdineDAO;
 import it.solvingteam.gestioneordini.model.articolo.Articolo;
+import it.solvingteam.gestioneordini.model.categoria.Categoria;
 import it.solvingteam.gestioneordini.model.ordine.Ordine;
 
 public class OrdineServiceImpl implements OrdineService{
@@ -66,13 +67,14 @@ private OrdineDAO ordineDAO;
 		try {
 			// questo è come il MyConnection.getConnection()
 			entityManager.getTransaction().begin();
-
+			
 			// uso l'injection per il dao
 			ordineDAO.setEntityManager(entityManager);
 
 			// eseguo quello che realmente devo fare
 			ordineDAO.update(ordineInstance);
 
+			
 			entityManager.getTransaction().commit();
 		} catch (Exception e) {
 			entityManager.getTransaction().rollback();
@@ -82,21 +84,26 @@ private OrdineDAO ordineDAO;
 	}
 
 	@Override
-	public void inserisciNuovo(Ordine ordineInstance) throws Exception {
+	public void inserisciNuovo(Ordine ordineInstance) throws Exception {  //---CONTROLLO if ordine.getArticoli().isEmpty allora aggiungi articolo 
 		// questo è come una connection
 		EntityManager entityManager = EntityManagerUtil.getEntityManager();
 
 		try {
 			// questo è come il MyConnection.getConnection()
 			entityManager.getTransaction().begin();
-
+			
 			// uso l'injection per il dao
 			ordineDAO.setEntityManager(entityManager);
-
+			
+			if(ordineInstance.getArticoli().size()==0) {
+				System.out.println("\n\n!!ATTENZIONE!!L'ordine che tenti di inserire, non contiene degli articoli!\n\n");
+				return;
+			}else {
 			// eseguo quello che realmente devo fare
 			ordineDAO.insert(ordineInstance);
-
+			
 			entityManager.getTransaction().commit();
+			}
 		} catch (Exception e) {
 			entityManager.getTransaction().rollback();
 			e.printStackTrace();
@@ -139,15 +146,25 @@ private OrdineDAO ordineDAO;
 
 			// uso l'injection per il dao
 			ordineDAO.setEntityManager(entityManager);
-
-			// 'attacco' alla sessione di hibernate i due oggetti
-			// così jpa capisce che se è già presente quella categoria non deve essere inserita
-			ordineEsistente = entityManager.merge(ordineEsistente);
-			articoloEsistente = entityManager.merge(articoloEsistente);
 			
-			ordineDAO.setArticolo(ordineEsistente, articoloEsistente);
+			if(articoloEsistente.getOrdine()!=null) {
 			
-			entityManager.getTransaction().commit();
+				// 'attacco' alla sessione di hibernate i due oggetti
+				// così jpa capisce che se è già presente quella categoria non deve essere inserita
+				if(ordineEsistente.getArticoli().size()==0) {
+					System.out.println("\n\n!!ATTENZIONE!!L'ordine in cui tenti di inserire l'articolo" + articoloEsistente.getDescrizione() + "non esiste!\n\n");
+					return;
+				} else {
+				ordineEsistente = entityManager.merge(ordineEsistente);
+				articoloEsistente = entityManager.merge(articoloEsistente);
+				
+				articoloEsistente.setOrdine(ordineEsistente);
+				
+				entityManager.getTransaction().commit();
+				}
+			} else {
+				System.out.println("\n\nL'articolo che cerchi di inserire è già stato ordinato!\n\n");
+			}
 		} catch (Exception e) {
 			entityManager.getTransaction().rollback();
 			e.printStackTrace();
@@ -173,7 +190,7 @@ private OrdineDAO ordineDAO;
 			ordineEsistente = entityManager.merge(ordineEsistente);
 			articoloEsistente = entityManager.merge(articoloEsistente);
 			
-			ordineDAO.removeArticolo(ordineEsistente, articoloEsistente);
+			articoloEsistente.setOrdine(null);
 
 			entityManager.getTransaction().commit();
 		} catch (Exception e) {
@@ -182,8 +199,9 @@ private OrdineDAO ordineDAO;
 			throw e;
 		}
 	}
+
 	@Override
-	public void trovaPerCategoria(String descrizioneCategoria) throws Exception{
+	public void findAllByCategoria(Categoria categoria) throws Exception {
 		EntityManager entityManager = EntityManagerUtil.getEntityManager();
 
 		try {
@@ -194,7 +212,7 @@ private OrdineDAO ordineDAO;
 			ordineDAO.setEntityManager(entityManager);
 
 			// eseguo quello che realmente devo fare
-			ordineDAO.findAllByCategoria(descrizioneCategoria);
+			ordineDAO.findAllByCategoria(categoria);
 
 			entityManager.getTransaction().commit();
 		} catch (Exception e) {
@@ -203,4 +221,6 @@ private OrdineDAO ordineDAO;
 			throw e;
 		}
 	}
+	
+	
 }

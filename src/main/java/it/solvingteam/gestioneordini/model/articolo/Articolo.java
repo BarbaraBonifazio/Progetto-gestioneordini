@@ -93,17 +93,4 @@ public class Articolo {
 			return "Articolo [id=" + id + ", descrizione=" + descrizione + ", prezzo=" + prezzoSingolo + ", ordine=" + ordine + ", categorie="
 					+ categorie.size() + "]"; //se qui inserisci Categorie toString() stai invalidando il LAZY FETCH
 		}	
-		
-		@Override 
-		public boolean equals(Object object) {
-			if(object instanceof Articolo) {	//controllo che l'oggetto passato in input sia un'istanza di Utente prima di poter fare il cast
-				Articolo articolo = (Articolo) object; //faccio il cast di o a all'oggetto Articolo, assegnandolo a un oggetto Articolo di appoggio 
-				return descrizione.equals(articolo.getDescrizione()); //effettuo il confronto sull'attributo descrizione
-				//ritorno true se il confronto del valore a cui punta la "descrizione" della classe Articolo 
-				//coincide con il valore a cui punta la "descrizone" del nuovo oggetto Articolo di appoggio (che ha assunto il valore dell'oggetto passato in input)
-			}
-			else {
-				return this.equals(object); //altrimenti ritorno false in quanto il valore di "descrizione" di object non coincide con quello dell'istanza
-			}
-		}
 }

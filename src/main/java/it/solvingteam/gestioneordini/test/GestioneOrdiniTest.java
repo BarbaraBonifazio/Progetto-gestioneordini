@@ -1,10 +1,13 @@
 package it.solvingteam.gestioneordini.test;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import it.solvingteam.gestioneordini.dao.EntityManagerUtil;
-import it.solvingteam.gestioneordini.dao.MyServiceFactory;
 import it.solvingteam.gestioneordini.model.articolo.Articolo;
 import it.solvingteam.gestioneordini.model.categoria.Categoria;
 import it.solvingteam.gestioneordini.model.ordine.Ordine;
+import it.solvingteam.gestioneordini.service.MyServiceFactory;
 import it.solvingteam.gestioneordini.service.articolo.ArticoloService;
 import it.solvingteam.gestioneordini.service.categoria.CategoriaService;
 import it.solvingteam.gestioneordini.service.ordine.OrdineService;
@@ -121,7 +124,7 @@ public class GestioneOrdiniTest {
 //			}
 //			
 //			//inserisco forbici in più categorie per verificare la correttezza della relazione "Many to Many"
-			Categoria categoriaDaDb9 = categoriaServiceInstance.cercaPerDescrizione("Sport");
+//			Categoria categoriaDaDb9 = categoriaServiceInstance.cercaPerDescrizione("Sport");
 			Articolo articoloDaDb9 = articoloServiceInstance.cercaPerDescrizione("Felpa");
 //			if (articoloDaDb9 != null) {
 //				articoloServiceInstance.aggiungiCategoria(articoloDaDb9, categoriaDaDb9);
@@ -140,7 +143,21 @@ public class GestioneOrdiniTest {
 			Ordine ordine2 = new Ordine("Ludovica Celsi", "Via del pianeta terra, 66");
 			Ordine ordine3 = new Ordine("Benedetta Giaquinto", "Via del mal di testa, 80");
 			Ordine ordine4 = new Ordine("Osvaldo Settiminio", "Via degli improbabili, 100");
+			Ordine ordine5 = new Ordine("Tito Caio", "Via ignota, 22");
+			
 						
+			//L'INSERT DI ORDINE CREA ORDINE -> PRIMA DI CREARE L'ORDINE DEVO SETTARE TUTTI GLI ARTICOLI D'INTERESSE PRENDENDO LA LISTA DI ARTICOLI DA DB!!!
+			
+			Set<Articolo> articoliPerOrdine1 = new HashSet<>(3);
+			articoliPerOrdine1.add(articoloDaDb);
+			articoliPerOrdine1.add(articoloDaDb9);
+			articoliPerOrdine1.add(articoloDaDb10);
+			ordine5.setArticoli(articoliPerOrdine1); //importo all'ordine la lista di articoli estrapolati da DB)
+			
+			ordineServiceInstance.inserisciNuovo(ordine5); //inserisco 
+			for(Articolo articoloDaMergiare:articoliPerOrdine1) {
+			ordineServiceInstance.inserisciArticolo(ordine5, articoloDaMergiare);
+			}
 			
 			//aggiorno i dati a DB con gli ordini appena istanziati
 //			ordineServiceInstance.inserisciNuovo(ordine);
@@ -169,11 +186,18 @@ public class GestioneOrdiniTest {
 //			categoriaServiceInstance.rimuovi(CatDaDb);
 			
 			
+			//Prova update
+//			Categoria categoriaDaDb9 = categoriaServiceInstance.cercaPerDescrizione("Sport");
+//			categoriaDaDb9.setDescrizione("Sports");
+//			categoriaServiceInstance.aggiorna(categoriaDaDb9);
+			
+			
+			
 			//------------------------------------------DOMANDE------------------------------------------//
 			//QUERY 1
 			//implementato metodo findAllByCategoria in OrdineDAOImpl
 //			System.out.println("\n\n##### Tutti gli ordini effettuati per una determinata categoria #####\n\n");
-//			ordineServiceInstance.trovaPerCategoria("Elettronica");
+//			ordineServiceInstance.findAllByCategoria(categoriaDaDb6); //questa è quella giusta
 			
 			//QUERY 2
 			//implementato metodo findAllByOrdine in CategoriaDAOImpl

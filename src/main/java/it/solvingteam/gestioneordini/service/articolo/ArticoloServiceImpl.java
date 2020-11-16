@@ -92,7 +92,7 @@ public class ArticoloServiceImpl implements ArticoloService{
 
 			// uso l'injection per il dao
 			articoloDAO.setEntityManager(entityManager);
-
+			
 			// eseguo quello che realmente devo fare
 			articoloDAO.insert(articoloInstance);
 
@@ -108,17 +108,21 @@ public class ArticoloServiceImpl implements ArticoloService{
 	public void rimuovi(Articolo articoloInstance) throws Exception {
 		// questo è come una connection
 		EntityManager entityManager = EntityManagerUtil.getEntityManager();
-
+		
 		try {
 			// questo è come il MyConnection.getConnection()
 			entityManager.getTransaction().begin();
 
 			// uso l'injection per il dao
 			articoloDAO.setEntityManager(entityManager);
-
-			// eseguo quello che realmente devo fare
+			if(articoloInstance.getOrdine()!=null) {
+			// se il valore ritornato è null eseguo quello che realmente devo fare
 			articoloDAO.delete(articoloInstance);
-
+			return;
+			} else { //altrimenti stampo in console il motivo per cui ritorna indietro 
+				System.out.println("\n\n!!ATTENZIONE!! Questo articolo è presente in un ordine, non puoi eliminarlo! \n\n");
+			}
+			
 			entityManager.getTransaction().commit();
 		} catch (Exception e) {
 			entityManager.getTransaction().rollback();
@@ -164,7 +168,7 @@ public class ArticoloServiceImpl implements ArticoloService{
 			articoloEsistente = entityManager.merge(articoloEsistente);
 			categoriaEsistente = entityManager.merge(categoriaEsistente);
 			
-			articoloDAO.addCategoria(articoloEsistente, categoriaEsistente);
+			articoloEsistente.getCategorie().add(categoriaEsistente);
 			//l'update non viene richiamato a mano in quanto 
 			//risulta automatico, infatti il contesto di persistenza
 			//rileva che articoloEsistente ora è dirty vale a dire che una sua
@@ -195,7 +199,7 @@ public class ArticoloServiceImpl implements ArticoloService{
 			articoloEsistente = entityManager.merge(articoloEsistente);
 			categoriaEsistente = entityManager.merge(categoriaEsistente);
 			
-			articoloDAO.removeCategoria(articoloEsistente, categoriaEsistente);
+			articoloEsistente.getCategorie().remove(categoriaEsistente);
 
 			entityManager.getTransaction().commit();
 		} catch (Exception e) {

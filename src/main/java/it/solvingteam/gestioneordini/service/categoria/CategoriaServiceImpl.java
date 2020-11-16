@@ -116,10 +116,14 @@ public class CategoriaServiceImpl implements CategoriaService{
 
 			// uso l'injection per il dao
 			categoriaDAO.setEntityManager(entityManager);
-
+			if(categoriaInstance.getArticoli()!=null) {
 			// eseguo quello che realmente devo fare
 			categoriaDAO.delete(categoriaInstance);
-
+			return;
+			} else {
+				System.out.println("\\n\\n !!ATTENZIONE!! La categoria che cerchi di eliminare è stata assegnata ad almeno "
+						+ " un articolo pertanto non puoi eliminarla!\n\n");
+			}
 			entityManager.getTransaction().commit();
 		} catch (Exception e) {
 			entityManager.getTransaction().rollback();
@@ -167,4 +171,10 @@ public class CategoriaServiceImpl implements CategoriaService{
 			entityManager.close();
 		}
 	}
+	
+	//IMPLEMENTA I METODI DA RICHIAMARE NEL SERVICE PER EFFETTUARE LE LOGICHE DI CONTROLLO 
+	
+		//-INSERT
+		//-DELETE
+		//-UPDATE
 }

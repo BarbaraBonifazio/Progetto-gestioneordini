@@ -4,6 +4,7 @@ import java.util.Set;
 
 import it.solvingteam.gestioneordini.dao.ordine.OrdineDAO;
 import it.solvingteam.gestioneordini.model.articolo.Articolo;
+import it.solvingteam.gestioneordini.model.categoria.Categoria;
 import it.solvingteam.gestioneordini.model.ordine.Ordine;
 
 public interface OrdineService {
@@ -22,9 +23,9 @@ public interface OrdineService {
 	
 	void rimuoviArticolo(Ordine ordineEsistente, Articolo articoloEsistente) throws Exception;
 	
+	void findAllByCategoria(Categoria categoria) throws Exception;
+	
 	// per injection
 	public void setOrdineDAO(OrdineDAO ordineDAO);
-
-	void trovaPerCategoria(String descrizioneCategoria) throws Exception;
 
 }
