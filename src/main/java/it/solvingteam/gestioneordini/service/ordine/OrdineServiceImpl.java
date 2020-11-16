@@ -220,7 +220,5 @@ private OrdineDAO ordineDAO;
 			e.printStackTrace();
 			throw e;
 		}
-	}
-	
-	
+	}	
 }
